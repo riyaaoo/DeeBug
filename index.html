@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>DeeBug — Cute Pastel Bug Arena</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2285%22>🐞</text></svg>">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Full-screen interactive 2D pastel meadow canvas -->
+    <canvas id="game-canvas" aria-label="DeeBug Game Arena"></canvas>
+
+    <!-- In-Game HUD -->
+    <header id="hud" class="hud hidden">
+      <!-- Top Left: Player Rank, Points, Progress, Hearts & Boost -->
+      <section class="hud-card hud-player" aria-label="Player Status">
+        <div class="hud-top-row">
+          <span id="hud-rank-pill" class="rank-pill">Lv.1</span>
+          <span id="hud-rank-name" class="rank-name">Baby Ladybug</span>
+          <span id="hud-points" class="points-pill">0 pts</span>
+        </div>
+
+        <div class="progress-wrap" title="Points toward next rank (buying skins spends these points!)">
+          <div id="hud-progress-fill" class="progress-fill" style="width: 0%"></div>
+          <span id="hud-progress-text" class="progress-text">0 / 70 → Lv.2</span>
+        </div>
+
+        <div class="hud-bottom-row">
+          <div id="hud-hearts" class="hearts-row" aria-label="Health"></div>
+          <div class="boost-wrap" title="Dash energy (Click, Space, or Dash button)">
+            <span class="boost-icon">✨</span>
+            <div class="boost-track">
+              <div id="hud-boost-fill" class="boost-fill" style="width: 100%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="hud-effects-row" class="hud-effects-row" hidden aria-label="Active Food Effects"></div>
+      </section>
+
+      <!-- Top Right: Controls & Garden Leaderboard -->
+      <section class="hud-right">
+        <div class="hud-actions">
+          <button id="shop-btn" type="button" class="pill-btn shop-btn" title="Open Skin Shop (B)">
+            <span>🎀 Skins</span>
+            <span id="shop-btn-count" class="btn-subcount">1/8</span>
+            <span id="shop-affordable-dot" class="notify-dot" hidden aria-label="New skin affordable"></span>
+          </button>
+          <button id="mute-btn" type="button" class="icon-btn" title="Toggle Sound" aria-label="Mute sound">🔊</button>
+        </div>
+
+        <aside class="hud-card leaderboard-card" aria-label="Biggest Bugs in Garden">
+          <div class="lb-title">🌼 Garden Leaders</div>
+          <div id="leaderboard-list" class="lb-list"></div>
+        </aside>
+      </section>
+    </header>
+
+    <!-- Touch / iPad Friendly Controls -->
+    <div id="touch-controls" class="touch-controls hidden">
+      <button id="touch-shop-btn" type="button" class="touch-mini-btn" aria-label="Open Skin Shop">
+        🎀
+      </button>
+      <button id="touch-dash-btn" type="button" class="touch-dash-btn" aria-label="Dash Boost">
+        <span>✨</span>
+        <small>DASH</small>
+      </button>
+    </div>
+
+    <!-- Toast notification banner -->
+    <div id="toast-banner" class="toast-banner" role="status" aria-live="polite"></div>
+
+    <!-- Start / Title Screen Overlay -->
+    <div id="start-overlay" class="modal-backdrop">
+      <main class="panel start-panel">
+        <div class="brand-row">
+          <span class="brand-badge">Pastel Bug Arena</span>
+          <h1 class="brand-title">DeeBug</h1>
+          <p class="brand-tagline">Eat smaller bugs, grow bigger, and unlock adorable bug skins!</p>
+        </div>
+
+        <div class="hero-stage">
+          <canvas id="hero-preview-canvas" width="220" height="170" aria-label="Animated cute bug preview"></canvas>
+        </div>
+
+        <div class="rules-grid">
+          <div class="rule-chip rule-mint">
+            <strong>🍓 Eat Bugs &amp; Garden Food</strong>
+            <span>Leaves, berries, fruits &amp; mushrooms help you grow!</span>
+          </div>
+          <div class="rule-chip rule-butter">
+            <strong>✨ Glowing Magic Treats</strong>
+            <span>Get Giant, Invisible, Fast or Strong — watch out for silly purple ones!</span>
+          </div>
+          <div class="rule-chip rule-coral">
+            <strong>🏡 Rest in Fenced Areas</strong>
+            <span>Duck past ponds &amp; trees into fenced zones to escape big bugs!</span>
+          </div>
+          <div class="rule-chip rule-lilac">
+            <strong>🐱 Skins &amp; Victory</strong>
+            <span>Trade points for cute skins! Reach Lv.10 OR collect all 8 skins!</span>
+          </div>
+        </div>
+
+        <div class="start-form">
+          <label for="player-name-input" class="sr-only">Your Bug Name</label>
+          <input
+            id="player-name-input"
+            type="text"
+            maxlength="14"
+            placeholder="Name your bug..."
+            value="DeeBug"
+            autocomplete="off"
+          >
+          <button id="start-btn" type="button" class="primary-btn">
+            🌸 Play Garden
+          </button>
+        </div>
+
+        <div id="start-best-stats" class="best-stats" hidden></div>
+
+        <p class="controls-hint">
+          <strong>Laptop:</strong> Move mouse or WASD/Arrows • Click/Space to Dash • <strong>B</strong> for Skins<br>
+          <strong>iPad / Touch:</strong> Drag anywhere to steer • Tap <strong>DASH</strong> &amp; <strong>🎀</strong>
+        </p>
+      </main>
+    </div>
+
+    <!-- Cute Skin Shop Modal -->
+    <div id="shop-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="shop-title">
+      <div class="panel shop-panel">
+        <div class="shop-header">
+          <div>
+            <h2 id="shop-title" class="shop-title">🎀 Cute Bug Skin Boutique</h2>
+            <p class="shop-note">
+              Trade your points for cute skins — still a bug!
+              <strong>Spent points are deducted</strong> from your level-up progress.
+            </p>
+          </div>
+          <button id="shop-close-btn" type="button" class="close-btn" aria-label="Close Skin Shop">✕</button>
+        </div>
+
+        <div class="shop-bar">
+          <span class="shop-balance">Your Points: <strong id="shop-points-value">0 pts</strong></span>
+          <span id="shop-owned-label" class="shop-owned">1 / 8 Skins</span>
+        </div>
+
+        <div id="shop-grid" class="shop-grid"></div>
+      </div>
+    </div>
+
+    <!-- Victory / Game Over Modal -->
+    <div id="result-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="result-title">
+      <div class="panel result-panel">
+        <div id="result-badge" class="result-badge badge-gold">👑 VICTORY</div>
+        <h2 id="result-title" class="result-title">You Rule the Garden!</h2>
+        <p id="result-subtitle" class="result-subtitle"></p>
+
+        <div class="result-preview-wrap">
+          <canvas id="result-preview-canvas" width="200" height="150"></canvas>
+        </div>
+
+        <div id="result-stats-grid" class="result-stats-grid"></div>
+
+        <div class="result-actions">
+          <button id="result-continue-btn" type="button" class="secondary-btn" hidden>
+            ✨ Keep Playing for 100%!
+          </button>
+          <button id="result-restart-btn" type="button" class="primary-btn">
+            🌸 Play Again
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modular vanilla scripts loaded in dependency order with relative paths only -->
+  <script defer src="./js/config.js"></script>
+  <script defer src="./js/storage.js"></script>
+  <script defer src="./js/audio.js"></script>
+  <script defer src="./js/entities.js"></script>
+  <script defer src="./js/ai.js"></script>
+  <script defer src="./js/engine.js"></script>
+  <script defer src="./js/renderer.js"></script>
+  <script defer src="./js/input.js"></script>
+  <script defer src="./js/ui.js"></script>
+  <script defer src="./js/main.js"></script>
+</body>
+</html>
