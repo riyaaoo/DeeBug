@@ -334,24 +334,23 @@
     _populateInitialFood() {
       const target = Config.WORLD.targetFoodCount;
       const starterTypes = ['fresh_leaf', 'sweet_berry', 'peach_fruit', 'button_mushroom', 'star_berry'];
-      for (let i = 0; i < 14; i++) {
-        const angle = (i / 14) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
-        const dist = 115 + Math.random() * 260;
+      // Keep only a few starter snacks nearby so food feels scarce and rewarding to forage!
+      for (let i = 0; i < 5; i++) {
+        const angle = (i / 5) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+        const dist = 160 + Math.random() * 260;
         const fx = this.player.x + Math.cos(angle) * dist;
         const fy = this.player.y + Math.sin(angle) * dist;
         if (this._isPointClearForSpawn(fx, fy, 18, false)) {
-          const typeId = i === 4 ? 'star_berry' : starterTypes[i % 4];
+          const typeId = starterTypes[i % starterTypes.length];
           this.foods.push(new FoodItem({ typeId, x: fx, y: fy }));
         }
       }
 
       for (let s = 0; s < this.sanctuaries.length; s++) {
         const zone = this.sanctuaries[s];
-        for (let k = 0; k < 2; k++) {
-          const fx = zone.x + (Math.random() - 0.5) * (zone.width - 90);
-          const fy = zone.y + (Math.random() - 0.5) * (zone.height - 90);
-          this.foods.push(new FoodItem({ typeId: k === 0 ? 'sweet_berry' : 'fresh_leaf', x: fx, y: fy }));
-        }
+        const fx = zone.x + (Math.random() - 0.5) * (zone.width - 100);
+        const fy = zone.y + (Math.random() - 0.5) * (zone.height - 100);
+        this.foods.push(new FoodItem({ typeId: s % 2 === 0 ? 'sweet_berry' : 'fresh_leaf', x: fx, y: fy }));
       }
 
       while (this.foods.length < target) {
@@ -397,30 +396,36 @@
 
     _chooseSpawnRank() {
       const pRank = this.player ? this.player.rank : 1;
+      const maxAiRank = Config.MAX_RANK - 1;
       const roll = Math.random();
 
       if (pRank <= 1) {
-        if (roll < 0.52) return 0;
-        if (roll < 0.74) return 1;
-        if (roll < 0.87) return 2;
-        if (roll < 0.95) return 3;
-        return 4 + Math.floor(Math.random() * 3);
+        if (roll < 0.36) return 0;
+        if (roll < 0.58) return 1;
+        if (roll < 0.76) return 2;
+        if (roll < 0.89) return 3 + Math.floor(Math.random() * 2);
+        return Math.min(maxAiRank, 5 + Math.floor(Math.random() * 6));
       }
 
       if (pRank >= Config.MAX_RANK) {
-        return Math.max(0, Math.min(Config.MAX_RANK - 1, Math.floor(Math.random() * Config.MAX_RANK)));
+        return Math.max(0, Math.min(maxAiRank, Math.floor(Math.random() * Config.MAX_RANK)));
       }
 
-      if (roll < 0.44) {
-        return Math.max(0, pRank - 1 - Math.floor(Math.random() * Math.min(3, pRank)));
+      if (roll < 0.32) {
+        // Strictly lower rank (tasty snacks, but you have to hunt for them!)
+        return Math.max(0, pRank - 1 - Math.floor(Math.random() * Math.min(4, pRank)));
       }
-      if (roll < 0.64) {
+      if (roll < 0.52) {
+        // Equal rank (fair chomp!)
         return pRank;
       }
-      if (roll < 0.83) {
-        return Math.min(Config.MAX_RANK - 1, pRank + 1 + (Math.random() < 0.36 ? 1 : 0));
+      if (roll < 0.80) {
+        // +1 to +3 stronger rivals roaming nearby for higher challenge
+        return Math.min(maxAiRank, pRank + 1 + Math.floor(Math.random() * 3));
       }
-      return Math.min(Config.MAX_RANK - 1, Math.max(pRank + 2, 4 + Math.floor(Math.random() * 6)));
+      // Roaming big garden titans (up to Lv.19)
+      const minTitan = Math.min(maxAiRank, Math.max(pRank + 3, 7));
+      return minTitan + Math.floor(Math.random() * (maxAiRank - minTitan + 1));
     }
 
     _spawnAIBug(anywhereInWorld) {
@@ -602,12 +607,12 @@
         }
       }
 
-      // 6. Continuously spawn fresh garden food
+      // 6. Continuously spawn fresh garden food (slower cadence so food stays scarce!)
       this.foodSpawnTimer -= clampedDt;
       if (this.foodSpawnTimer <= 0) {
-        this.foodSpawnTimer = 0.35;
+        this.foodSpawnTimer = 1.1;
         const missingFood = Config.WORLD.targetFoodCount - this.foods.length;
-        const toSpawn = Math.min(5, Math.max(0, missingFood));
+        const toSpawn = Math.min(2, Math.max(0, missingFood));
         for (let s = 0; s < toSpawn; s++) {
           this._spawnFoodItem(false);
         }
@@ -698,8 +703,8 @@
       const throttle = clamp(intent.throttle !== undefined ? intent.throttle : 0, 0, 1);
       const prevAngle = bug.angle;
       if (throttle > 0.05 && intent.targetAngle !== undefined && !Number.isNaN(intent.targetAngle)) {
-        const turnRate = (bug.isPlayer ? 8.2 : 5.4) - bug.rank * 0.18;
-        bug.angle = lerpAngle(bug.angle, intent.targetAngle, Math.max(2.6, turnRate) * dt);
+        const turnRate = (bug.isPlayer ? 8.2 : 5.4) - bug.rank * 0.12;
+        bug.angle = lerpAngle(bug.angle, intent.targetAngle, Math.max(3.2, turnRate) * dt);
       }
       bug.angularVel = (bug.angle - prevAngle) / dt;
 

@@ -55,7 +55,7 @@
 
       // Smooth camera tracking & gentle zoom-out as player grows
       if (player) {
-        const targetZoomBase = Math.min(1.06, Math.max(0.56, 1.06 - (player.rank - 1) * 0.045));
+        const targetZoomBase = Math.min(1.06, Math.max(0.48, 1.06 - (player.rank - 1) * 0.029));
         const smallScreenScale = Math.min(1, Math.min(this.width, this.height) / 680);
         const targetZoom = targetZoomBase * (0.82 + 0.18 * smallScreenScale);
 

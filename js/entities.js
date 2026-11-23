@@ -269,9 +269,9 @@
       this.id = opts.id || generateEntityId('sanctuary');
       this.x = opts.x; // Center X
       this.y = opts.y; // Center Y
-      this.width = opts.width || 270;
-      this.height = opts.height || 230;
-      this.gateWidth = opts.gateWidth || 92;
+      this.width = opts.width || 290;
+      this.height = opts.height || 240;
+      this.gateWidth = opts.gateWidth || 116;
       this.wallThickness = 14;
       // Two cozy opposite gates (either top+bottom or left+right) for easy entry/escape
       this.gates = opts.gates || ['bottom', 'top'];

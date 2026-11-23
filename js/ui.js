@@ -387,13 +387,13 @@
           this.el.resultBadge.className = 'result-badge badge-gold';
           this.el.resultTitle.textContent = 'You Did EVERYTHING!';
           this.el.resultSubtitle.textContent =
-            summary.name + ' became the Most Powerful Pastel Monarch AND collected every single cute skin!';
+            summary.name + ' became the Most Powerful Celestial Monarch AND collected every single cute skin!';
         } else if (payload.type === 'max_rank') {
           this.el.resultBadge.textContent = '👑 MOST POWERFUL BUG!';
           this.el.resultBadge.className = 'result-badge badge-gold';
           this.el.resultTitle.textContent = 'You Rule the Garden!';
           this.el.resultSubtitle.textContent =
-            summary.name + ' reached Max Rank (Lv.' + Config.MAX_RANK + ' Pastel Monarch)! Keep playing to collect all skins too, or start fresh!';
+            summary.name + ' reached Max Rank (Lv.' + Config.MAX_RANK + ' Celestial Monarch)! Keep playing to collect all skins too, or start fresh!';
         } else {
           this.el.resultBadge.textContent = '✨ ALL SKINS COLLECTED!';
           this.el.resultBadge.className = 'result-badge badge-lilac';
