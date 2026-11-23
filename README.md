@@ -7,14 +7,14 @@ A static, zero-dependency HTML/CSS/vanilla JavaScript 2D arena game inspired by 
 - **Move & Dash**:
   - **Laptop / Desktop**: Move your mouse cursor (or use `WASD` / Arrow keys) to steer. Left-click or hold `Space` / `Shift` to Dash. Press `B` or `Tab` to open the Skin Boutique.
   - **iPad / Touch**: Touch and drag anywhere on the meadow to steer with the floating virtual joystick. Tap the **DASH** button to boost and **🎀** for the Skin Boutique.
-- **Eat & Rank Up**: Eat equal or lower-rank bugs (`Lv.`) **and** abundant non-bug garden food (**leaves, berries, fruits, and mushrooms**) to earn points and rank up from **Lv.1 Baby Ladybug** to **Lv.10 Pastel Monarch**, growing larger with each rank!
+- **Eat & Rank Up**: Eat equal or lower-rank bugs (`Lv.`) **and** scarce non-bug garden food (**leaves, berries, fruits, and mushrooms**) to earn points and rank up across **20 levels** from **Lv.1 Baby Ladybug** to **Lv.20 Celestial Monarch**, growing larger with each level!
 - **Glowing Magic & Tricky Treats (5–9s)**:
   - **Power-Ups**: Golden Mega Fruit (*Bigger & Stronger*), Ghost Mist Leaf (*Invisible*), Power Shroom (*Super Strong +2 Lv*), and Zippy Star Berry (*Super Fast*).
   - **Silly Debuffs**: Sticky Plum Berry (*Slower*), Sleepy Dusk Leaf (*Weaker*), and Shrink Toadstool (*Tiny Bug*).
 - **Garden Obstacles & Safe Rest Areas**: Navigate around randomly generated immovable **trees, ponds, and mossy rocks**, and duck through the open gates of cozy **Fenced Safe Rest Areas** to escape bigger bugs and heal hearts quickly!
 - **Higher-Rank Risk**: Bumping into higher-rank bugs hurts you (or knocks you out if they are way too powerful!). Brave players can trade blows with a `+1` rank bug to weaken and chomp it for bonus points.
 - **Skin Boutique Trade-Off**: Spend your points to unlock cute skins — each skin keeps your character unmistakably a cute bug! Spent points are deducted from your current points balance, delaying your next rank-up.
-- **Win Conditions**: Win by becoming the **Most Powerful Bug (Lv.10)** OR **collecting all 8 skins** — and optionally keep playing to earn **Ultimate 100% Champion** (both)!
+- **Win Conditions**: Win by becoming the **Most Powerful Bug (Lv.20)** OR **collecting all 8 skins** — and optionally keep playing to earn **Ultimate 100% Champion** (both)!
 
 ## Deployment (Static Hosting)
 
